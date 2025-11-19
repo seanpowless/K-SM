@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovereignty Monitor - Rules</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1e1e1e;
+      color: #fff;
+      padding: 32px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .section {
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #333;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .section p {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      background: #1e1e1e;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    textarea::placeholder {
+      color: #555;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #667eea;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .secondary {
+      background: #333;
+    }
+
+    .secondary:hover {
+      background: #444;
+    }
+
+    .danger {
+      background: #dc2626;
+    }
+
+    .danger:hover {
+      background: #b91c1c;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: #1e1e1e;
+      padding: 16px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .stat-box-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 4px;
+    }
+
+    .stat-box-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-box {
+      background: #1e3a5f;
+      border: 1px solid #2563eb;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .info-box-title {
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .info-box ul {
+      margin-left: 20px;
+      color: #93c5fd;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .success-message {
+      background: #064e3b;
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-top: 12px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .example {
+      background: #1e1e1e;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 12px;
+      color: #10b981;
+      margin-bottom: 12px;
+      border: 1px solid #2a2a2a;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sovereignty Monitor</h1>
+  <div class="subtitle">Your browser. Your rules. Your sovereignty.</div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-box-value" id="blacklist-count">0</div>
+      <div class="stat-box-label">Blacklisted Domains</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value" id="whitelist-count">0</div>
+      <div class="stat-box-label">Whitelisted Domains</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value" id="total-blocked">0</div>
+      <div class="stat-box-label">Total Blocked</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Blacklist (Block These Domains)</h2>
+    <p>Add domains or patterns to block. One per line. Partial matches supported.</p>
+
+    <div class="info-box">
+      <div class="info-box-title">Examples:</div>
+      <ul>
+        <li><code>google-analytics.com</code> - Block Google Analytics</li>
+        <li><code>facebook.com/tr</code> - Block Facebook tracking pixel</li>
+        <li><code>segment.io</code> - Block Segment analytics</li>
+        <li><code>telemetry</code> - Block any URL containing "telemetry"</li>
+      </ul>
+    </div>
+
+    <textarea id="blacklist" placeholder="google-analytics.com
+googletagmanager.com
+mixpanel.com
+segment.io
+amplitude.com
+sentry.io
+facebook.com/tr
+doubleclick.net"></textarea>
+
+    <div class="button-group">
+      <button id="save-blacklist">Save Blacklist</button>
+      <button class="secondary" id="reset-blacklist">Reset to Default</button>
+    </div>
+    <div class="success-message" id="blacklist-success">Blacklist saved successfully!</div>
+  </div>
+
+  <div class="section">
+    <h2>Whitelist (Always Allow)</h2>
+    <p>Add domains to always allow, even if they match blacklist patterns. One per line.</p>
+
+    <div class="info-box">
+      <div class="info-box-title">Use whitelist for:</div>
+      <ul>
+        <li>Trusted analytics you want to allow</li>
+        <li>First-party tracking that's essential for site functionality</li>
+        <li>Domains that match blacklist patterns but should be allowed</li>
+      </ul>
+    </div>
+
+    <textarea id="whitelist" placeholder="example.com
+my-trusted-site.com
+essential-analytics.mysite.com"></textarea>
+
+    <div class="button-group">
+      <button id="save-whitelist">Save Whitelist</button>
+      <button class="secondary" id="clear-whitelist">Clear All</button>
+    </div>
+    <div class="success-message" id="whitelist-success">Whitelist saved successfully!</div>
+  </div>
+
+  <div class="section">
+    <h2>Export Blocked Requests</h2>
+    <p>Download a CSV report of all blocked requests from this session.</p>
+    <button id="export-report">Export CSV Report</button>
+  </div>
+
+  <div class="section">
+    <h2>Advanced Settings</h2>
+    <p>Manage extension data and settings.</p>
+    <div class="button-group">
+      <button class="secondary" id="view-logs">View Background Logs</button>
+      <button class="danger" id="clear-all-data">Clear All Data</button>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
